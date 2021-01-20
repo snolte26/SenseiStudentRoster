@@ -199,7 +199,7 @@ public class StudentRoster {
 					System.out.println("Creating Student");
 					// Create new student and set information
 					Student newStudent = new Student();
-					newStudent.setID(1);
+					newStudent.setID(0);
 					newStudent.setName(name);
 					newStudent.setRank(rank);
 					newStudent.setGender(gender);
@@ -218,7 +218,7 @@ public class StudentRoster {
 					// Create new student and set information
 					Student newStudent = new Student();
 					
-					newStudent.setID(s.size() + 1);
+					newStudent.setID(s.size());
 					newStudent.setName(name);
 					newStudent.setRank(rank);
 					newStudent.setGender(gender);
@@ -317,7 +317,7 @@ public class StudentRoster {
 				System.out.println("Which Student to Delete: ");
 				id = input.nextInt();
 				
-				s.remove(id-1);
+				s.remove(id);
 				for (int i = 0; i < s.size(); i++) {
 					s.get(i).setID(i);
 				}
