@@ -1,11 +1,34 @@
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.io.*;
 
-public class StudentRoster {
+public class StudentRoster implements Serializable{
 
 	public static void main(String[] args) {
 		Scanner input = new Scanner(System.in);
 		ArrayList<Student> student = new ArrayList<Student>(10);
+		
+		try
+		{
+		    FileInputStream fis = new FileInputStream("studentList.txt");
+		    ObjectInputStream ois = new ObjectInputStream(fis);
+		    student = (ArrayList) ois.readObject();
+		    ois.close();
+		    fis.close();
+		 }catch(FileNotFoundException fnfe) {
+			 System.out.println("file not found");
+			 fnfe.printStackTrace();
+		 }catch(IOException ioe){
+		     ioe.printStackTrace();
+		     return;
+		 }catch(ClassNotFoundException c){
+		     System.out.println("Class not found");
+		     c.printStackTrace();
+		     return;
+		 }
+		for(Student tmp: student){
+		    System.out.println(tmp);
+		}
 		
 		int select = 0;
 		int id = 0;
@@ -49,6 +72,7 @@ public class StudentRoster {
 					System.out.println("Belt: " + student.get(i).getRank());
 					System.out.println("Date Tested: " + student.get(i).getDateTested());
 					System.out.println("Ready to Test: " + student.get(i).getTestReady());
+					System.out.println("Comments: " + student.get(i).getComments());
 					System.out.println();
 				}
 				break;
@@ -76,13 +100,14 @@ public class StudentRoster {
 					id = input.nextInt();
 					
 					if (student.get(id-1) != null) {
-						System.out.println("ID: " + student.get(id-1).getID());
-						System.out.println("Name: " + student.get(id-1).getName());
-						System.out.println("Age: " + student.get(id-1).getAge());
-						System.out.println("Gender: " + student.get(id-1).getGender());
-						System.out.println("Belt: " + student.get(id-1).getRank());
-						System.out.println("Date Tested: " + student.get(id-1).getDateTested());
-						System.out.println("Ready to Test: " + student.get(id-1).getTestReady());
+						System.out.println("ID: " + student.get(id).getID());
+						System.out.println("Name: " + student.get(id).getName());
+						System.out.println("Age: " + student.get(id).getAge());
+						System.out.println("Gender: " + student.get(id).getGender());
+						System.out.println("Belt: " + student.get(id).getRank());
+						System.out.println("Date Tested: " + student.get(id).getDateTested());
+						System.out.println("Ready to Test: " + student.get(id).getTestReady());
+						System.out.println("Comments: " + student.get(id).getComments());
 						System.out.println();
 					}
 					
@@ -98,6 +123,7 @@ public class StudentRoster {
 							System.out.println("Age: " + student.get(i).getAge());
 							System.out.println("Gender: " + student.get(i).getGender());
 							System.out.println("Belt: " + student.get(i).getRank());
+							System.out.println("Comments: " + student.get(i).getComments());
 							System.out.println();
 							
 							
@@ -124,6 +150,18 @@ public class StudentRoster {
 					input.close();
 				}
 					
+				//writes the current list to a file
+				try{
+				    FileOutputStream writeData = new FileOutputStream("studentList.txt");
+				    ObjectOutputStream writeStream = new ObjectOutputStream(writeData);
+
+				    writeStream.writeObject(student);
+				    writeStream.flush();
+				    writeStream.close();
+
+				}catch (IOException e) {
+				    e.printStackTrace();
+				}
 
 				// break out of switch statement
 				System.out.println();
@@ -190,6 +228,9 @@ public class StudentRoster {
 				
 				System.out.println("Ready to Test (Yes/No): ");
 				testReady = input.nextLine();
+					
+				System.out.println("Comments: ");
+				comments = input.nextLine();
 				
 				
 				
@@ -206,6 +247,7 @@ public class StudentRoster {
 					newStudent.setAge(age);
 					newStudent.setDateTested(dateTested);
 					newStudent.setTestReady(testReady);
+					newStudent.setComments(comments);
 					
 					// Add new student to the list
 					s.add(newStudent);
@@ -225,6 +267,7 @@ public class StudentRoster {
 					newStudent.setAge(age);
 					newStudent.setDateTested(dateTested);
 					newStudent.setTestReady(testReady);
+					newStudent.setComments(comments);
 							
 					// Add new student to the list
 					s.add(newStudent);
@@ -244,14 +287,15 @@ public class StudentRoster {
 				System.out.println("2. Age");
 				System.out.println("3. Test Date");
 				System.out.println("4. Ready to Test");
+				System.out.println("5. Comments");
 				System.out.println();
 				
 				while (true) {
 					selection = input.nextInt();
-					if (selection > 0 && selection < 5) {
+					if (selection > 0 && selection < 6) {
 						break;
 					}else {
-						System.out.println("Must be 1-4");
+						System.out.println("Must be 1-5");
 						continue;
 					}
 				}
@@ -309,6 +353,19 @@ public class StudentRoster {
 						System.out.println("Error: No Student with that ID Exists");
 					}
 					break;
+				case 5:
+					// get the info to update
+					System.out.println("Enter Comments: ");
+					input.nextLine();
+					comments = input.nextLine();
+					
+					// if student exists, update the field
+					if (s.get(id) != null) {
+						s.get(id).setComments(comments);
+					} else {
+						System.out.println("Error: No Student with that ID Exists");
+					}
+					break;
 				}
 				System.out.println("Updated!");
 				
@@ -353,7 +410,7 @@ public class StudentRoster {
 
 }
 
-class Student{
+class Student implements Serializable{
 	private String name, rank, gender, comments;
 	private int age, id;
 	private String dateTested;
@@ -427,22 +484,5 @@ class Student{
 	}
 	//````````````````````````````````````````````````````````````````````````
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
